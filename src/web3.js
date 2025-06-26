@@ -30,7 +30,7 @@ const switchNetwork = async () => {
                                 decimals: 18
                             },
                             rpcUrls: [RPC_URL],
-                            blockExplorerUrls: ['https://scan-testnet.wadzchain.io']
+                            blockExplorerUrls: ['https://scan.w-chain.com']
                         }
                     ]
                 });
