@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import web3 from './web3';
 import TokenFactoryABI from './TokenFactoryABI.json';
 import './App.css';
-
+import WalletConnectProvider from "@walletconnect/web3-provider";
+import web3 from './web3'; // Import your custom web3 instance
 
 const TOKEN_FACTORY_ADDRESS = "0xB4720A23EB43487ABe7DE48D205d174D7eA0f4D5";
 
@@ -16,38 +16,62 @@ const App = () => {
 
     useEffect(() => {
         const init = async () => {
+            // Initialize the factory contract
             const factoryInstance = new web3.eth.Contract(
                 TokenFactoryABI,
                 TOKEN_FACTORY_ADDRESS
             );
             setFactoryContract(factoryInstance);
+
+            // Automatically get accounts if connected
+            if (window.ethereum) {
+                const accounts = await web3.eth.getAccounts();
+                if (accounts.length > 0) setAccount(accounts[0]);
+            }
         };
         init();
     }, []);
 
     const connectWallet = async () => {
-        const accounts = await web3.eth.requestAccounts();
+        const provider = new WalletConnectProvider({
+            rpc: {
+                71117: "https://rpc-testnet.wadzchain.io", // Chain ID and RPC URL
+            },
+        });
+
+        // Enable session (QR Code modal)
+        await provider.enable();
+
+        // Set WalletConnect as the provider for web3
+        web3.setProvider(provider);
+
+        // Get accounts
+        const accounts = await web3.eth.getAccounts();
         setAccount(accounts[0]);
+
+        // Handle WalletConnect session close
+        provider.on("disconnect", () => {
+            setAccount(null);
+        });
     };
 
     const createToken = async () => {
-      if (!factoryContract || !account) return;
-  
-      try {
-          await factoryContract.methods
-              .createToken(tokenName, tokenSymbol, initialSupply)
-              .send({ 
-                  from: account,
-                  gasPrice: await web3.eth.getGasPrice()  // Set gas price manually
-              });
-  
-          alert("Token created successfully!");
-      } catch (error) {
-          console.error("Error creating token:", error);
-          alert("Token creation failed!");
-      }
-  };
-  
+        if (!factoryContract || !account) return;
+
+        try {
+            await factoryContract.methods
+                .createToken(tokenName, tokenSymbol, initialSupply)
+                .send({
+                    from: account,
+                    gasPrice: await web3.eth.getGasPrice(),
+                });
+
+            alert("Token created successfully!");
+        } catch (error) {
+            console.error("Error creating token:", error);
+            alert("Token creation failed!");
+        }
+    };
 
     const getTokensByOwner = async () => {
         if (!factoryContract) return;
@@ -61,20 +85,19 @@ const App = () => {
     };
 
     return (
-        <div>
+        <div className="app">
             <nav className="navbar">
                 <a href="/" className="logo">DagZilla's Token Factory</a>
                 <button className="connect-wallet-button" onClick={connectWallet}>
-                {account ? `Connected: ${account.slice(0, 6)}...${account.slice(-4)}` : "Connect Wallet"}
-
+                    {account ? `Connected: ${account.slice(0, 6)}...${account.slice(-4)}` : "Connect Wallet"}
                 </button>
             </nav>
 
             <div className="container">
                 <h1>Deploy Your Token</h1>
-                {account && <p>Connected Wallet: ${account.slice(0, 6)}...${account.slice(-4)}</p>}
+                {account && <p>Connected Wallet: {account.slice(0, 6)}...{account.slice(-4)}</p>}
 
-                <div>
+                <div className="form">
                     <input
                         type="text"
                         placeholder="Token Name"
@@ -101,12 +124,17 @@ const App = () => {
                 <ul className="token-list">
                     {tokens.map((token, index) => (
                         <li key={index}>
-                            <strong>Name:</strong> {token.name}, <strong>Symbol:</strong> {token.symbol}, 
+                            <strong>Name:</strong> {token.name}, <strong>Symbol:</strong> {token.symbol},
                             <strong> Contract:</strong>
                             <a href={`https://scan-testnet.wadzchain.io/address/${token.tokenAddress}`} target="_blank" rel="noopener noreferrer">
                                 {token.tokenAddress}
                             </a>
-                            <button className="copy-button" onClick={() => navigator.clipboard.writeText(token.tokenAddress)}>Copy Address</button>
+                            <button
+                                className="copy-button"
+                                onClick={() => navigator.clipboard.writeText(token.tokenAddress)}
+                            >
+                                Copy Address
+                            </button>
                         </li>
                     ))}
                 </ul>
@@ -116,3 +144,4 @@ const App = () => {
 };
 
 export default App;
+
