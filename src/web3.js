@@ -3,7 +3,7 @@ import Web3 from 'web3';
 
 const CHAIN_ID = 71117;
 const RPC_URL = 'https://rpc-testnet.wadzchain.io';
-const CURRENCY_SYMBOL = 'WCO';
+const CURRENCY_SYMBOL = 'WTK';
 
 let web3;
 
