@@ -23,9 +23,9 @@ const switchNetwork = async () => {
                     params: [
                         {
                             chainId: Web3.utils.toHex(CHAIN_ID),
-                            chainName: 'WadzChain Testnet',
+                            chainName: 'WadzChain',
                             nativeCurrency: {
-                                name: 'Wadz Testnet Token',
+                                name: 'Wadz Token',
                                 symbol: CURRENCY_SYMBOL,
                                 decimals: 18
                             },
