@@ -1,8 +1,8 @@
 // src/web3.js
 import Web3 from 'web3';
 
-const CHAIN_ID = 71117;
-const RPC_URL = 'https://rpc-testnet.wadzchain.io';
+const CHAIN_ID = 171717;
+const RPC_URL = 'https://rpc.wadzchain.io';
 const CURRENCY_SYMBOL = 'WCO';
 
 let web3;
