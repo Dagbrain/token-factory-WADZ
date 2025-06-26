@@ -4,7 +4,7 @@ import './App.css';
 import WalletConnectProvider from "@walletconnect/web3-provider";
 import web3 from './web3'; // Import your custom web3 instance
 
-const TOKEN_FACTORY_ADDRESS = "0xB4720A23EB43487ABe7DE48D205d174D7eA0f4D5";
+const TOKEN_FACTORY_ADDRESS = "0xFbfBa4b29b48Ce8CCeeB014Cad1BBc5Edc56F68e";
 
 const App = () => {
     const [account, setAccount] = useState('');
@@ -35,7 +35,7 @@ const App = () => {
     const connectWallet = async () => {
         const provider = new WalletConnectProvider({
             rpc: {
-                71117: "https://rpc-testnet.wadzchain.io", // Chain ID and RPC URL
+                171717: "https://rpc.wadzchain.io", // Chain ID and RPC URL
             },
         });
 
@@ -126,7 +126,7 @@ const App = () => {
                         <li key={index}>
                             <strong>Name:</strong> {token.name}, <strong>Symbol:</strong> {token.symbol},
                             <strong> Contract:</strong>
-                            <a href={`https://scan-testnet.wadzchain.io/address/${token.tokenAddress}`} target="_blank" rel="noopener noreferrer">
+                            <a href={`https://rpc.wadzchain.io/address/${token.tokenAddress}`} target="_blank" rel="noopener noreferrer">
                                 {token.tokenAddress}
                             </a>
                             <button
